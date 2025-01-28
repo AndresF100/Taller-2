@@ -12,10 +12,10 @@ import datetime as dt
 # comentario de prueba de repositorio en github
 
 
-
 app = dash.Dash(
     __name__,
-    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
+    meta_tags=[{"name": "viewport",
+                "content": "width=device-width, initial-scale=1"}],
 )
 app.title = "Dashboard energia"
 
@@ -25,23 +25,26 @@ app.config.suppress_callback_exceptions = True
 
 # Load data from csv
 def load_data():
+    "Docstring de alyona"
     # Cargar el archivo datos_energia.csv como un DataFrame
     df = pd.read_csv('datos_energia.csv')
-    
+
     # Convertir la columna time al formato datetime
     df['time'] = pd.to_datetime(df['time'])
-    
+
     # Establecer la columna time como índice del DataFrame
     df.set_index('time', inplace=True)
-    
+
     # Retornar el DataFrame
     return df
-    
+
 
 # Cargar datos
 data = load_data()
 
 # Graficar serie
+
+
 def plot_series(data, initial_date, proy):
     data_plot = data.loc[initial_date:]
     data_plot = data_plot[:-(120-proy)]
@@ -91,17 +94,17 @@ def plot_series(data, initial_date, proy):
             x=1
         ),
         yaxis_title='Demanda total [MW]',
-        #title='Continuous, variable value error bars',
+        # title='Continuous, variable value error bars',
         hovermode="x"
     )
-    #fig = px.line(data2, x='local_timestamp', y="Demanda total [MW]", markers=True, labels={"local_timestamp": "Fecha"})
-    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color="#2cfec1")
+    # fig = px.line(data2, x='local_timestamp', y="Demanda total [MW]", markers=True, labels={"local_timestamp": "Fecha"})
+    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)',
+                      plot_bgcolor='rgba(0,0,0,0)', font_color="#2cfec1")
     fig.update_xaxes(showgrid=True, gridwidth=0.25, gridcolor='#7C7C7C')
     fig.update_yaxes(showgrid=True, gridwidth=0.25, gridcolor='#7C7C7C')
-    #fig.update_traces(line_color='#2cfec1')
+    # fig.update_traces(line_color='#2cfec1')
 
     return fig
-
 
 
 def description_card():
@@ -111,7 +114,7 @@ def description_card():
     return html.Div(
         id="description-card",
         children=[
-            #html.H5("Proyecto 1"),
+            # html.H5("Proyecto 1"),
             html.H3("Pronóstico de producción energética"),
             html.Div(
                 id="intro",
@@ -148,16 +151,18 @@ def generate_control_card():
                         ],
                         style=dict(width='30%')
                     ),
-                    
-                    html.P(" ",style=dict(width='5%', textAlign='center')),
-                    
+
+                    html.P(" ", style=dict(width='5%', textAlign='center')),
+
                     html.Div(
                         id="componente-hora",
                         children=[
                             dcc.Dropdown(
                                 id="dropdown-hora-inicial-hora",
-                                options=[{"label": i, "value": i} for i in np.arange(0,25)],
-                                value=pd.to_datetime(max(data.index)-dt.timedelta(days=7)).hour,
+                                options=[{"label": i, "value": i}
+                                         for i in np.arange(0, 25)],
+                                value=pd.to_datetime(
+                                    max(data.index)-dt.timedelta(days=7)).hour,
                                 # style=dict(width='50%', display="inline-block")
                             )
                         ],
@@ -181,11 +186,12 @@ def generate_control_card():
                         step=1,
                         value=0,
                         marks=None,
-                        tooltip={"placement": "bottom", "always_visible": True},
+                        tooltip={"placement": "bottom",
+                                 "always_visible": True},
                     )
                 ]
-            )     
-     
+            )
+
         ]
     )
 
@@ -193,7 +199,7 @@ def generate_control_card():
 app.layout = html.Div(
     id="app-container",
     children=[
-        
+
         # Left column
         html.Div(
             id="left-column",
@@ -205,7 +211,7 @@ app.layout = html.Div(
                 )
             ],
         ),
-        
+
         # Right column
         html.Div(
             id="right-column",
@@ -220,12 +226,12 @@ app.layout = html.Div(
                         html.B("Demanda energética total en Austria [MW]"),
                         html.Hr(),
                         dcc.Graph(
-                            id="plot_series",  
+                            id="plot_series",
                         )
                     ],
                 ),
 
-            
+
             ],
         ),
     ],
@@ -235,8 +241,9 @@ app.layout = html.Div(
 @app.callback(
     Output(component_id="plot_series", component_property="figure"),
     [Input(component_id="datepicker-inicial", component_property="date"),
-    Input(component_id="dropdown-hora-inicial-hora", component_property="value"),
-    Input(component_id="slider-proyeccion", component_property="value")]
+     Input(component_id="dropdown-hora-inicial-hora",
+           component_property="value"),
+     Input(component_id="slider-proyeccion", component_property="value")]
 )
 def update_output_div(date, hour, proy):
 
